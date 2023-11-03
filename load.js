@@ -1,7 +1,8 @@
-const waitSync = require('wait-sync');
-const { EOL } = require('os');
-const fs = require('fs');
-const inquirer = require('inquirer');
+const waitSync = require("wait-sync");
+const { EOL } = require("os");
+const fs = require("fs");
+const inquirer = require("inquirer");
+const NewClass = require("./NewClass");
 
 class Load {
   constructor() {}
@@ -15,7 +16,6 @@ class Load {
 
     const bar = "█".repeat(completed) + "-".repeat(remaining);
     process.stdout.write(`[${bar}] ${percentage}`);
-
   }
 
   static startLoad() {
@@ -73,15 +73,15 @@ class Load {
     inquirer
       .prompt([
         {
-          type: 'input',
-          name: 'username',
-          message: 'Введи имя:',
+          type: "input",
+          name: "username",
+          message: "Введи имя:",
         },
         {
-          type: 'password',
-          message: 'Enter a masked password',
-          name: 'password2',
-          mask: '*',
+          type: "password",
+          message: "Enter a masked password",
+          name: "password2",
+          mask: "*",
         },
       ])
       .then((answers) => {
@@ -91,14 +91,21 @@ class Load {
         fs.appendFileSync(`${__dirname}/RegUser.txt`, jsonData + "\n");
         Load.printFullWidthText(`${UserName}-Привет!`);
         Load.printFullWidthText(`${UserName}, не подведи нас!`);
-        inquirer.prompt([
-          {
-            type: "list",
-            name: "bonuses",
-            message: `${UserName} выбирай категорию?`,
-            choices: fs.readdirSync(`${__dirname}/topics`),
-          },
-        ]);
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "bonuses",
+              message: `${UserName} выбирай категорию?`,
+              choices: fs.readdirSync(`${__dirname}/topics`),
+            },
+          ])
+          .then((data) => {
+            const themeName = data.bonuses;
+            // const jsontheme = JSON.stringify(answers);
+            fs.writeFileSync(`${__dirname}/theme`, themeName);
+            NewClass.readFile();
+          });
       });
   }
 }
