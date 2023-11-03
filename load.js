@@ -13,7 +13,7 @@ class Load {
     const completed = Math.round(width * (percentage / 100));
     const remaining = width - completed;
     const bar = "█".repeat(completed) + "-".repeat(remaining);
-    process.stdout.write(`[${bar}] ${percentage}%`);
+    process.stdout.write(`[${bar}] ${percentage}`);
   }
 
   static startLoad() {
@@ -40,25 +40,29 @@ class Load {
     const padding = Math.floor((terminalWidth - text.length) / 2);
 
     const fullWidthText = "█".repeat(padding) + text + "█".repeat(padding);
-    console.log(`${fullWidthText}`);
+    console.log(`\x1b[32m\x1b[47m${fullWidthText}`);
   }
 
   static textInfo() {
-    const arr = fs
-      .readFileSync(`${__dirname}/topics/loadText.txt`, "utf-8")
-      .split("\n");
-
     waitSync(0.5);
-    Load.printFullWidthText(arr[0]);
-    waitSync(0.5);
-    Load.printFullWidthText(arr[1]);
-    waitSync(0.5);
-    Load.printFullWidthText(arr[2]);
-    waitSync(0.5);
-    Load.printFullWidthText(arr[3]);
-    waitSync(0.5);
-    Load.printFullWidthText(arr[4]);
+    Load.printFullWidthText("");
+    Load.printFullWidthText("");
+    Load.printFullWidthText("");
     waitSync(0.1);
+    Load.printFullWidthText(" Добро пожаловать! ");
+    waitSync(0.5);
+    Load.printFullWidthText(" создано с помощью:");
+    waitSync(0.5);
+    Load.printFullWidthText(" @Интерфейсные искатели@ ");
+    waitSync(0.5);
+    Load.printFullWidthText(" Мы пока не знаем как тебя зовут! ");
+    waitSync(0.5);
+    Load.printFullWidthText(
+      "  А если мы не знаем как тебя зовут, то мы не сможем тебя зарегистрировать.  "
+    );
+    waitSync(0.1);
+    Load.printFullWidthText("");
+    Load.printFullWidthText("");
     Load.printFullWidthText("");
     waitSync(0.1);
   }
@@ -79,8 +83,19 @@ class Load {
         },
       ])
       .then((answers) => {
+        const UserName = answers.username;
         const jsonData = JSON.stringify(answers);
         fs.appendFileSync(`${__dirname}/RegUser.txt`, jsonData + "\n");
+        Load.printFullWidthText(`${UserName}-Привет!`);
+        Load.printFullWidthText(`${UserName}, не подведи нас!`);
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "bonuses",
+            message: `${UserName} выбирай категорию?`,
+            choices: fs.readdirSync(`${__dirname}/topics`),
+          },
+        ]);
       });
   }
 }

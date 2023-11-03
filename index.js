@@ -1,5 +1,6 @@
 const Load = require("./load");
 const inquirer = require("inquirer");
+
 class Game {
   constructor() {}
 
